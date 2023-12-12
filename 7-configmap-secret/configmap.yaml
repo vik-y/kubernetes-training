@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-configmap
+data:
+  CONFIG_VALUE: "Hello, ConfigMap!"
+  ANOTHER_CONFIG: "Another value"
+  config.json: |
+    {
+      "key": "value",
+      "array": [
+        "1",
+        "2"
+      ]
+    }
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podinfo-configmap-env
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: podinfo-configmap-env
+  template:
+    metadata:
+      labels:
+        app: podinfo-configmap-env
+    spec:
+      containers:
+      - name: podinfo
+        image: stefanprodan/podinfo:latest
+        env:
+          - name: CONFIG_VALUE
+            valueFrom:
+              configMapKeyRef:
+                name: example-configmap
+                key: CONFIG_VALUE
+          - name: ANOTHER_CONFIG
+            valueFrom:
+              configMapKeyRef:
+                name: example-configmap
+                key: ANOTHER_CONFIG
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podinfo-configmap-env
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: podinfo-configmap-env
+  template:
+    metadata:
+      labels:
+        app: podinfo-configmap-env
+    spec:
+      containers:
+      - name: podinfo
+        image: podinfo:1.17
+        env:
+          - name: CONFIG_VALUE
+            valueFrom:
+              configMapKeyRef:
+                name: example-configmap
+                key: CONFIG_VALUE
+          - name: ANOTHER_CONFIG
+            valueFrom:
+              configMapKeyRef:
+                name: example-configmap
+                key: ANOTHER_CONFIG
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podinfo-configmap-volume
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: podinfo-configmap-volume
+  template:
+    metadata:
+      labels:
+        app: podinfo-configmap-volume
+    spec:
+      containers:
+      - name: podinfo
+        image: stefanprodan/podinfo:latest
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/config
+          subPath: config.json
+      volumes:
+      - name: config-volume
+        configMap:
+          name: example-configmap

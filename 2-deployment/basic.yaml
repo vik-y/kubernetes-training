@@ -1,0 +1,51 @@
+# This is a simple deployment of an nginx server 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3 # number of replicas 
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx # This label is applied to the pod should be the same as the selector
+        # You are free to add as any labels as you want but full set of selector labels must match the labels in the template
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.17
+        ports:
+        - containerPort: 80
+
+
+# Create the deployment
+# kubectl apply -f basic.yaml
+# Show pods and replicasets 
+
+# Modify the deployment 
+# Show replicasets 
+
+
+# Demonstrate how labels have to match 
+
+---
+apiVersion: v1 # This specifies the version of the Kubernetes API you're using to create the object. For a Pod, it's typically v1.
+kind: Pod # This specifies the kind of Kubernetes object you want to create. In this case, it's a Pod.
+metadata:
+  name: nginx-pod
+  labels: # Key-value pairs that are used to organize and categorize pods. Here, the pod is labeled with app: nginx.
+  # Think of lables as tags that you can use to organize your pods.
+    app: nginx 
+    pod-template-hash: 8845b484d
+spec:
+  containers: # # containers: A list of containers that the pod will run.
+  - name: nginx
+    image: nginx:1.17
+    ports:
+    - containerPort: 80
+
+#  while true; do kubectl get pods; sleep 0.2; done

@@ -1,0 +1,13 @@
+apiVersion: v1 # This specifies the version of the Kubernetes API you're using to create the object. For a Pod, it's typically v1.
+kind: Pod # This specifies the kind of Kubernetes object you want to create. In this case, it's a Pod.
+metadata:
+  name: nginx-pod
+  labels: # Key-value pairs that are used to organize and categorize pods. Here, the pod is labeled with app: nginx.
+  # Think of lables as tags that you can use to organize your pods.
+    app: nginx 
+spec:
+  containers: # # containers: A list of containers that the pod will run.
+  - name: nginx
+    image: nginx:1.17
+    ports:
+    - containerPort: 80

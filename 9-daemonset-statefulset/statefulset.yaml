@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: my-statefulset-demo
+spec:
+  serviceName: "my-service"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-statefulset-demo
+  template:
+    metadata:
+      labels:
+        app: my-statefulset-demo
+    spec:
+      containers:
+      - name: my-container
+        image: nginx
+        volumeMounts:
+        - mountPath: "/var/www/html"
+          name: my-volume
+  volumeClaimTemplates:
+  - metadata:
+      name: my-volume
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+
+---
+# create a headless service 
+# to allow the pods to be accessed by their names
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  clusterIP: None
+  selector:
+    app: my-statefulset-demo
+  ports:
+  - port: 80
+    name: http
+    protocol: TCP
+    targetPort: 80

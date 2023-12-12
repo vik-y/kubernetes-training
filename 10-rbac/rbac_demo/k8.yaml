@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pod-checker
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pod-checker
+  template:
+    metadata:
+      labels:
+        app: pod-checker
+    spec:
+      serviceAccountName: pod-checker
+      imagePullSecrets:
+        - name: dockerhub-vikasy
+      # ignore linting error
+      containers: 
+        - name: pod-checker
+          image: vikasy/pod-checker-demo
+          imagePullPolicy: Always
+          env:
+            - name: SLACK_WEBHOOK_URL
+              value: "https://hooks.slack.com/services/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"
+            - name: NAMESPACE
+              value: "default"
+            - name: POD_THRESHOLD
+              value: "5"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pod-checker
+  namespace: default
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pod-reader-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: pod-checker
+  namespace: default
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
