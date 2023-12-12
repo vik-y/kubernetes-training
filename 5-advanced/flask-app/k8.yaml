@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-hello-world
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-hello-world
+  template:
+    metadata:
+      labels:
+        app: flask-hello-world
+    spec:
+      imagePullSecrets: # To pull image from private registry
+      - name: dockerhub-vikasy
+      containers:
+      - name: flask-hello-world
+        image: vikasy/flask-demo-nutanix # this 
+        ports:
+        - containerPort: 5000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-hello-world-service
+spec:
+  selector:
+    app: flask-hello-world
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: flask-hello-world-ingress
+  # annotations:
+  #   letsencrypt.org/issuer: letsencrypt-prod # Magic 
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - nutanix.k8.takemetoprod.com
+      secretName: nutanix-k8-takemetoprod-com-tls
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: flask-hello-world-service
+            port:
+              number: 80

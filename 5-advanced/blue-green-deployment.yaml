@@ -1,0 +1,92 @@
+# Quiz: Deploy this manifest and make sure it works as expected.
+#       Currently the service is pointing to the blue deployment.
+#       Change the service to point to the green deployment.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podinfo-blue
+spec:
+  selector:
+    matchLabels:
+      app: podinfo-blue
+  template:
+    metadata:
+      labels:
+        app: podinfo-blue
+    spec:
+      containers:
+      - name: podinfo
+        image: stefanprodan/podinfo
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        env:
+        - name: PODINFO_UI_COLOR
+          value: "#34577c" # blue
+        - name: PODINFO_UI_MESSAGE
+          value: "I'm blue!"
+        ports:
+        - containerPort: 9898
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podinfo-green
+spec:
+  selector:
+    matchLabels:
+      app: podinfo-green
+  template:
+    metadata:
+      labels:
+        app: podinfo-green
+    spec:
+      containers:
+      - name: podinfo
+        image: stefanprodan/podinfo
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        env:
+        - name: PODINFO_UI_COLOR
+          value: "#008000	" # green
+        - name: PODINFO_UI_MESSAGE
+          value: "I'm green!"
+        ports:
+        - containerPort: 9898
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: podinfo
+spec:
+  selector:
+    app: podinfo-blue
+  ports:
+  - port: 80
+    targetPort: 9898
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: podinfo
+  labels:
+    name: podinfo
+spec:
+  rules:
+  - host: podinfo.example.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: podinfo
+            port: 
+              number: 80
