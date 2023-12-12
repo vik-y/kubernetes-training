@@ -23,7 +23,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: SLACK_WEBHOOK_URL
-              value: "https://hooks.slack.com/services/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"
+              value: ""
             - name: NAMESPACE
               value: "default"
             - name: POD_THRESHOLD
