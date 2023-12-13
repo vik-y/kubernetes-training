@@ -20,5 +20,12 @@ chmod +x kubectx
 sudo mv kubens kubectx /usr/local/bin
 ```
 
+## Configure addons 
+```
+# Enable ingress add on
+minikube addons enable ingress
 
+# Enable registry add on
+minikube addons enable registry
+```
 
