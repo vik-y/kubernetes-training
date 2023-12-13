@@ -5,6 +5,6 @@ $ docker ps | grep 5000
 ```
 From the above output we see that 127.0.0.1:52402 is mapping to port 5000 on the minikube VM. So that's our registry address.
 
-REGISTRY_ADDRESS=127.0.0.1:52402
+REGISTRY_ADDRESS=127.0.0.1:52403
 docker tag vikasy/pod-checker-demo ${REGISTRY_ADDRESS}/pod-checker-demo
 docker push ${REGISTRY_ADDRESS}/pod-checker-demo
