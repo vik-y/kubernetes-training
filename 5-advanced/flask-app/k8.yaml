@@ -12,11 +12,11 @@ spec:
       labels:
         app: flask-hello-world
     spec:
-      imagePullSecrets: # To pull image from private registry
-      - name: dockerhub-vikasy
+      # imagePullSecrets: # To pull image from private registry
+      # - name: dockerhub-vikasy
       containers:
       - name: flask-hello-world
-        image: vikasy/flask-demo-nutanix # this 
+        image: flask-demo-nutanix # this 
         ports:
         - containerPort: 5000
 
