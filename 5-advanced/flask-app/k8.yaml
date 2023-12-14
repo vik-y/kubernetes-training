@@ -16,7 +16,7 @@ spec:
       # - name: dockerhub-vikasy
       containers:
       - name: flask-hello-world
-        image: flask-demo-nutanix # this 
+        image: vikasy/flask-demo-nutanix # this 
         ports:
         - containerPort: 5000
 
@@ -45,10 +45,11 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - nutanix.k8.takemetoprod.com
-      secretName: nutanix-k8-takemetoprod-com-tls
+        - nutanix.takemetoprod.com
+      secretName: vikas-k8-takemetoprod-com-tls
   rules:
-  - http:
+  - host: nutanix.takemetoprod.com
+    http:
       paths:
       - path: /
         pathType: Prefix
